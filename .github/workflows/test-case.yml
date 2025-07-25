@@ -1,0 +1,64 @@
+name: Flask Integration Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  security-events: read
+
+jobs:
+  TestCase:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install matching Chrome + Chromedriver (v137)
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y unzip curl python3-pip
+        sudo apt-get install -y chromium-browser
+
+        CHROMEDRIVER_VERSION=137.0.7151.119
+        curl -Lo chromedriver.zip https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/$CHROMEDRIVER_VERSION/linux64/chromedriver-linux64.zip
+        unzip chromedriver.zip
+        sudo mv chromedriver-linux64/chromedriver /usr/bin/chromedriver
+        sudo chmod +x /usr/bin/chromedriver
+
+    - name: Install Python Dependencies
+      run: pip install -r web/requirements.txt
+
+    - name: Start Flask App in Background
+      working-directory: ./web
+      run: |
+        export FLASK_APP=app.py
+        nohup flask run --host=127.0.0.1 --port=5000 &
+        sleep 5
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install ESLint
+      working-directory: ./web
+      run: npm install eslint
+
+    - name: Run ESLint on JS files
+      working-directory: ./web
+      run: |
+        npx eslint . --config eslint.config.mjs || exit 1
+
+    - name: Run Selenium Password Tests
+      working-directory: ./web
+      run: python test_selenium.py

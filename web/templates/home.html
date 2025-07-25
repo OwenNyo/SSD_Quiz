@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Home</title>
+</head>
+<body>
+    <h2>Enter a Search Term</h2>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        <input type="text" name="search" value="{{ search_term }}" required>
+        <button type="submit">Search</button>
+    </form>
+</body>
+</html>

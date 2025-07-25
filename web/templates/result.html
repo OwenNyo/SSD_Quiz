@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Result</title>
+</head>
+<body>
+    <h2>Search Term Entered:</h2>
+    <p>{{ term }}</p>
+    <form action="{{ url_for('home') }}">
+        <button type="submit">Return Home</button>
+    </form>
+</body>
+</html>

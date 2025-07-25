@@ -1,0 +1,4 @@
+Flask #webapp
+selenium # selenium testing
+flake8 # linting
+setuptools # Vulnerabilities
