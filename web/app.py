@@ -1,7 +1,12 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for
 import re
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 
 def is_xss_attack(input_str):
     # Check for common XSS patterns
@@ -27,23 +32,21 @@ def is_sql_injection(input_str):
     ]
     return any(re.search(pattern, input_str, re.IGNORECASE) for pattern in sql_patterns)
 
-@app.route("/", methods=["GET", "POST"])
-def home():
-    search_term = ""
-    error = None
-    if request.method == "POST":
-        search_term = request.form.get("search", "")
+@app.route("/", methods=["GET"])
+def home_get():
+    return render_template("home.html", error=None, search_term="")
 
-        if is_xss_attack(search_term):
-            error = "Potential XSS attack detected. Please enter a valid search term."
-            search_term = ""
-        elif is_sql_injection(search_term):
-            error = "Potential SQL injection detected. Please enter a valid search term."
-            search_term = ""
-        else:
-            return redirect(url_for("result", term=search_term))
+@app.route("/", methods=["POST"])
+def home_post():
+    search_term = request.form.get("search", "")
     
-    return render_template("home.html", error=error, search_term=search_term)
+    if is_xss_attack(search_term):
+        return render_template("home.html", error="Potential XSS attack detected.", search_term="")
+    
+    if is_sql_injection(search_term):
+        return render_template("home.html", error="Potential SQL injection detected.", search_term="")
+    
+    return redirect(url_for("result", term=search_term))
 
 @app.route("/result")
 def result():
@@ -51,4 +54,4 @@ def result():
     return render_template("result.html", term=term)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=False)
