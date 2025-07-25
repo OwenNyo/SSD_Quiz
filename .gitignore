@@ -1,1 +1,2 @@
 sonar-project.properties
+gitea/git rm -r --cached gitea/
