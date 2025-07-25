@@ -47,7 +47,7 @@ jobs:
       - name: Run pip-audit
         run: |
           echo "Running pip-audit..."
-          pip-audit -r backend/requirements.txt
+          pip-audit -r web/requirements.txt
 
       # ------------------------
       # 4️⃣ OWASP Dependency Check
