@@ -10,6 +10,10 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 csrf = CSRFProtect(app)
 
+HOME_TEMPLATE = "home.html"
+
+RESULT_TEMPLATE = "result.html"
+
 def is_xss_attack(input_str):
     # Check for common XSS patterns
     xss_patterns = [
@@ -36,24 +40,24 @@ def is_sql_injection(input_str):
 
 @app.route("/", methods=["GET"])
 def home_get():
-    return render_template("home.html", error=None, search_term="")
+    return render_template(HOME_TEMPLATE, error=None, search_term="")
 
 @app.route("/", methods=["POST"])
 def home_post():
     search_term = request.form.get("search", "")
     
     if is_xss_attack(search_term):
-        return render_template("home.html", error="Potential XSS attack detected.", search_term="")
+        return render_template(HOME_TEMPLATE, error="Potential XSS attack detected.", search_term="")
     
     if is_sql_injection(search_term):
-        return render_template("home.html", error="Potential SQL injection detected.", search_term="")
+        return render_template(HOME_TEMPLATE, error="Potential SQL injection detected.", search_term="")
     
     return redirect(url_for("result", term=search_term))
 
 @app.route("/result")
 def result():
     term = request.args.get("term", "")
-    return render_template("result.html", term=term)
+    return render_template(RESULT_TEMPLATE, term=term)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=False)
