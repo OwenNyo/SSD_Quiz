@@ -2,13 +2,10 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 import re
 from dotenv import load_dotenv
-from flask_wtf.csrf import CSRFProtect
 
 load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-csrf = CSRFProtect(app)
 
 HOME_TEMPLATE = "home.html"
 
