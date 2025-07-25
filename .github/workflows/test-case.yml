@@ -13,8 +13,6 @@ permissions:
 jobs:
   TestCase:
     runs-on: ubuntu-latest
-    env:
-      FLASK_ENV: testing
 
     steps:
     - name: Checkout Code

@@ -2,20 +2,10 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 import re
 from dotenv import load_dotenv
-from flask_wtf.csrf import CSRFProtect
-
-csrf = CSRFProtect()
 
 load_dotenv()  # Load environment variables from .env file
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-
-# Disable CSRF only in testing environment
-if os.getenv("FLASK_ENV") == "testing":
-    app.config['WTF_CSRF_ENABLED'] = False
-else:
-    csrf.init_app(app)
 
 # Constants
 HOME_TEMPLATE = "home.html"
