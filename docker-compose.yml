@@ -38,7 +38,7 @@ services:
     restart: always
     ports:
       - "3000:3000"     # Gitea Web UI
-      - "2222:22"       # SSH for Git
+      - "2222:22"       # SSH
     volumes:
       - ./gitea:/data
     networks:
